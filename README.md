@@ -282,7 +282,7 @@ Here is a diagram of of the pixel encoding per byte.
 
 Imagine this on/off values represent a sub section of the whole image data. Focusing on the section in brackets, the pixel bit mapping looks like this:
 ```
-#pixel data on/off
+#pixel data on/off in groups of three
 [on  off on] [off off off] [on on off] [on off on]
 
 #bit positions (With the first empty 7th bit left off)
@@ -290,6 +290,9 @@ Imagine this on/off values represent a sub section of the whole image data. Focu
 
 #binary equaivalent
 [   0x30   ] [   0x00   ]  [   0x3c  ] [   0x33   ]
+
+#sysex message buffer equalivalent
+msg = [0x30, 0x00, 0x3c, 0x33] #...etc
 ```
 
 
