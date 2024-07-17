@@ -1,7 +1,9 @@
 ![alt](mpc_studio_black.jpeg)
 
-[TOC]
+[Headers](#headers)  
+[Emphasis](#emphasis)  
 
+<a name="headers" ></a>
 # MPC Studio Black - Midi Speceification
 This repository holds the midi specification for the MPC Studio Black. This information was not provided by AKAI Professional, and I am not affiliated with them in any manner. I am simply an owner of the product and have documented it's MIDI protocol for my personal use. The repo is a product of that my findings.
 
@@ -27,6 +29,8 @@ The pads on the MPC Studio Black communicate on channel 10(channel 9 in code) an
 |9      |51  |15        |
 |9      |53  |16        |
 
+
+<a name="headers" ></a>
 ## Function Buttons Mapping
 The Function buttons to immediately North of the top row of Pads communicate on channel 1(0 in code), and send only NoteOn Message. On Press, the Function buttons send a velocity value of 127. On release, the buttons send a velocity of 0, which your daw will recognize as a NoteOff value, but it's important for you to know if you decide to develope custome software for this device. Listed below is a table for the Function Button Mapping.
 
