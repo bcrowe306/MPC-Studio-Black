@@ -1,5 +1,7 @@
 ![alt](mpc_studio_black.jpeg)
 
+[TOC]
+
 # MPC Studio Black - Midi Speceification
 This repository holds the midi specification for the MPC Studio Black. This information was not provided by AKAI Professional, and I am not affiliated with them in any manner. I am simply an owner of the product and have documented it's MIDI protocol for my personal use. The repo is a product of that my findings.
 
