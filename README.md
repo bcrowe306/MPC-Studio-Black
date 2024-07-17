@@ -13,6 +13,7 @@
 * [Button LED Feedback](#ButtonLEDFeedback)  
 * [Pad LED Feedback](#PADLEDFeedback)  
 * [LCD Screen](#LCDScreen)  
+* [Integration](#Integration)  
 
 
 <a name="overview" ></a>
@@ -252,7 +253,7 @@ each power of eight seems to raise the brightness of the color, while the sub_po
 
 I'm almost positive that there is a more concise way to draw color on the MPC Studio Black, but no sysex protocol was provided by Akai. Any assistance here is appreciated.
 
-<a name="LCD Screen" ></a>
+<a name="LCDScreen" ></a>
 ## LCD Screen
 The LCD screen on the MPC Studio Black is a 360px x 96px dot matrix screen. That means it has 360 on/off pixels horizontally, and 96 on/off px vertically. The screen data is sent to the device via Sysex messages sent from the host application(MPC Software 2). The data is sent to the controller from left->right, top->bottom, in a row by row fashion. It does this using 120byte buffers on/off data for 3 pixels contained in one byte. That 120byte buffer is sent 96 times per frame to fill the screen. There doesn't seem to be any time out once the data is sent, and no need to meet any particular FPS for the LCD screen. From my observations, you only need to send screen data if the display needs to be updated *(Could be wrong here...)* Listed below is breakdown of the sysex message. This data is in HEX format.
 
@@ -323,7 +324,8 @@ There may be a way to chuck multiple lines in one sysex call. This has not been 
 
 Im working on a python implementation for the screen and I will upload the repository once I get it in working fashion. 
 
-## Conclusion
+<a name="Integration" ></a>
+## Integration
 
 There are many DAWs that support controller scripting at the moment, so it is possible to use this controller with those DAWs. The issue that I have run into is implementing the Display with these daws. Generating graphical displays is normally done using lower level libraries, usually implemented in C / C++. While these tools have bindings for other higher level scripting languages, they are not commonly supported in the scripting environments given to us by the DAW manufacture.
 
