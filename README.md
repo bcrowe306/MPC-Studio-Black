@@ -322,7 +322,7 @@ With that, you should be able to send data to the screen.  You would still need 
 
 There may be a way to chuck multiple lines in one sysex call. This has not been tested, but if anyone reading this wants to give it a try, I'll be more than willing to update the repository to reflect your findings. Sending sysex data is not particularly fast because it's still just a midi message, but fortunately, its only 360x96 bytes of data being sent, so most languages should be able to generate and send this data without issue *(Even slow python)*
 
-Im working on a python implementation for the screen and I will upload the repository once I get it in working fashion. 
+A python implementation of lighting the screen is included in this repository for example. 
 
 <a name="Integration" ></a>
 ## Integration

@@ -1,0 +1,4 @@
+pycairo
+mido
+python-rtmidi
+numpy
