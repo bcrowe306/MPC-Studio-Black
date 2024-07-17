@@ -282,12 +282,25 @@ The pixel data is not standard RGB or any representation of that BGR565, RGB24. 
 * _ = pixel off
 
 ```
+# All pixels off
 _ _ _ = 0x00
+
+# First pixel on, rest off
 x _ _ = 0x30
+
+# Last pixel off
 x x _ = 0x3c
+
+# All pixels on
 x x x = 0x3f
+
+# Last two pixel on
 _ x x = 0x0f
+
+# Last pixel on
 _ _ x = 0x03
+
+# Middle Pixel on
 _ x _ = 0x0c
 
 ```
