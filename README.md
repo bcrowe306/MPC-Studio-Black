@@ -268,27 +268,61 @@ Each message starts with a header to identify the device and type of message bei
 msg_header = [0x47 ,0x7f, 0x3d, 0x04, 0x00, 0x7e, 0x02, 0x68, 0x00, 0x00, 0x00]
 ```
 #### The line # byte
-The next byte in the sequence is the line number. This is a number from 0-95 and determines the line to fill.
+The next Sysex byte in the sequence is the line number. This is a number from 0-95 represented in HEX and determines the line to fill.
 
 ```python
-line0=0
+# line 16
+line0=0x10 
 msg_header.append(line0)
 ```
 
 #### The pixel data
-The pixel data is not standard RGB or any representation of that BGR565, RGB24. The pixel only needs on/off bit. Because of this, they have chosen to represent three pixels worth of data in one byte by setting bits of 3. Here is a diagram of of the pixel encoding per byte.
+The pixel data is not standard RGB or any representation of that BGR565, RGB24. The pixel only needs on/off bit. Because of this, they have chosen to represent three pixels worth of data in one byte by dividing the 7byte sysex message into three sections. The left most bit is left unset. The 6th and 5bit represent the first pixel in the sequence, the 4th and 3rd bit represent the second pixel in the sequence. The 2nd and 1st bit represent the 3rd pixel in the sequence.
+Here is a diagram of of the pixel encoding per byte.
+
+Imagine this on/off values represent a sub section of the whole image data. Focusing on the section in brackets, the pixel bit mapping looks like this:
+```
+#pixel data on/off in groups of three
+[on  off on] [off off off] [on on off] [on off on]
+
+#bit positions (With the first empty 7th bit left off)
+[11  00  00] [00  00  00 ] [11 11 00 ] [11 00  11]
+
+#binary equaivalent
+[   0x30   ] [   0x00   ]  [   0x3c  ] [   0x33   ]
+
+#sysex message buffer equalivalent
+msg = [0x30, 0x00, 0x3c, 0x33] #...etc
+```
+
 
 * x = pixel on
 * _ = pixel off
 
 ```
+# All pixels off
 _ _ _ = 0x00
+
+# First pixel on, rest off
 x _ _ = 0x30
+
+# Last pixel off
 x x _ = 0x3c
+
+# All pixels on
 x x x = 0x3f
+
+# Last two pixel on
 _ x x = 0x0f
+
+# Last pixel on
 _ _ x = 0x03
+
+# Middle Pixel on
 _ x _ = 0x0c
+
+# Middle Pixel off
+x _ x = 0x33
 
 ```
 
