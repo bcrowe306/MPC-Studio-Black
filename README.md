@@ -15,8 +15,8 @@
 * [LCD Screen](#LCDScreen)  
 
 
-## Overview
 <a name="overview" ></a>
+## Overview
 This repository holds the midi specification for the MPC Studio Black. This information was not provided by AKAI Professional, and I am not affiliated with them in any manner. I am simply an owner of the product and have documented it's MIDI protocol for my personal use. The repo is a product of that my findings.
 
 <a name="PADNoteMapping" ></a>
@@ -44,8 +44,8 @@ The pads on the MPC Studio Black communicate on channel 10(channel 9 in code) an
 
 
 
-## Function Buttons Mapping
 <a name="FunctionButtonsMapping" ></a>
+## Function Buttons Mapping
 The Function buttons to immediately North of the top row of Pads communicate on channel 1(0 in code), and send only NoteOn Message. On Press, the Function buttons send a velocity value of 127. On release, the buttons send a velocity of 0, which your daw will recognize as a NoteOff value, but it's important for you to know if you decide to develope custome software for this device. Listed below is a table for the Function Button Mapping.
 
 |Channel|Note|Function Button|
@@ -57,8 +57,8 @@ The Function buttons to immediately North of the top row of Pads communicate on 
 |0      |33  |f5          |
 |0      |34  |f6          |
 
-## Q-Link Knobs
 <a name="QLinkKnobs" ></a>
+## Q-Link Knobs
 The QLinkj knobs to the left side of the controller send two types of messages:
 * **NoteOn**: The knobs are touch sensitive. On touch, it will send NoteOn with velocity 127. On Release, it will send NoteOn with velocity 0.
 * **ControlChange**: When turning the knob, they will send CC values from 0-127
@@ -75,15 +75,15 @@ Listed below is a table mapping the knobs to there corresponding ControlChange v
 |0      |19 |QLink4|
 
 
-## Jog Wheel
 <a name="JogWheel" ></a>
+## Jog Wheel
 The Jog wheel is the only endless encoder on the device. It sends a signed bit on CC 100. This means it sends the following values when turned:
 * **Clockwise turn**: MSG= channel:0, cc: 100, value: 1
 * **Counter turn**: MSG= channel:0, cc: 100, value: 127
 
 
-## Button Controls
 <a name="ButtonControls" ></a>
+## Button Controls
 The buttons on the MPC Studio Black primarily send NoteOn values of 127 for press and 0 for release. There are however a few buttons that send CC message in the same range instead of NoteOn message. The table below lists all the button mappings:
 
 |Channel|Note|Name        |Control Change|
@@ -136,8 +136,8 @@ The buttons on the MPC Studio Black primarily send NoteOn values of 127 for pres
 
 
 
-## Button LED Feedback
 <a name="ButtonLEDFeedback" ></a>
+## Button LED Feedback
 The MPC Studio Black is able to light the LEDs behind certain buttons using CC *(Control Change)* messages sent on channel 0 *(zero is channel one when observing midi and developing)*. 
 
 #### Button Types
@@ -207,8 +207,8 @@ outport.send(msg)
 |0      |113 |QlinkTrigger|one_color|
 
 
-## PAD LED Feedback
 <a name="PADLEDFeedback" ></a>
+## PAD LED Feedback
 The PADs are backlit with RGB LED lights. Unlike the MPC Studio Mk2, the PAD LEDs are controlled through sending CC(Control Change) messages on channel 10(9 in code) corresponding to the note of the pad. So given the table below, you can light up PAD 1 my sending a the following Message:
 
 ```
@@ -252,8 +252,8 @@ each power of eight seems to raise the brightness of the color, while the sub_po
 
 I'm almost positive that there is a more concise way to draw color on the MPC Studio Black, but no sysex protocol was provided by Akai. Any assistance here is appreciated.
 
-## LCD Screen
 <a name="LCD Screen" ></a>
+## LCD Screen
 The LCD screen on the MPC Studio Black is a 360px x 96px dot matrix screen. That means it has 360 on/off pixels horizontally, and 96 on/off px vertically. The screen data is sent to the device via Sysex messages sent from the host application(MPC Software 2). The data is sent to the controller from left->right, top->bottom, in a row by row fashion. It does this using 120byte buffers on/off data for 3 pixels contained in one byte. That 120byte buffer is sent 96 times per frame to fill the screen. There doesn't seem to be any time out once the data is sent, and no need to meet any particular FPS for the LCD screen. From my observations, you only need to send screen data if the display needs to be updated *(Could be wrong here...)* Listed below is breakdown of the sysex message. This data is in HEX format.
 
 #### Sysex Header
