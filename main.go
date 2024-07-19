@@ -111,8 +111,9 @@ func main() {
 		img := draw_image(ctx, msg.String())
 
 		// Write the lines to the screen
-		lines_drawn := write_to_screen(&outPort, &img, &lines)
-		fmt.Printf("Lines Drawn: %d\n", lines_drawn)
+		write_to_screen(&outPort, &img, &lines)
+
+		// fmt.Printf("Lines Drawn: %d\n", lines_drawn)
 	}, midi.UseSysEx())
 
 	if err != nil {
