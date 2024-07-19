@@ -329,17 +329,16 @@ x _ x = 0x33
 With this encoding, a stride of 360 pixel can be represented in 120 bytes buffer. The complete Sysex data would be something like this: **Capture taken from USBPCap/Wireshark**
 
 ```
-# sysex start
+# sysex start 1 byte
 f0 
 
-# header
-47 7f 3d 04 
-00 7e 02 68 00 00 00 
+# header 11 bytes
+47 7f 3d 04 00 7e 02 68 00 00 00 
 
-# line number
+# line number 1 byte
 40
 
-# 120 byte stride 
+# image data: 120bytes stride 
 0f 03 3f 3f 3f 3f 0f 33 30 0f 00 3f 30 0f 3f 3f 3f 3f 3f 30 03 00 00 00 00 30 0c 0f 0c 0f 3c 0f 30 0f 30 00 00 00 00 30 03 00 00 00 03 00 30 00 0f 3c 0f 30 30 30 00 00 00 00 00 03 00 00 00 00 03 00 30 00 0f 3c 0f 30 30 30 00 00 00 00 00 30 03 00 00 00 00 00 30 0c 0f 0c 03 30 0f 30 00 00 00 00 00 30 03 00 00 00 00 00 3f 30 0f 30 0f 30 0f 30 00 00 00 00 00 30 
 
 # sysex end
@@ -356,7 +355,10 @@ With that, you should be able to send data to the screen.  You would still need 
 
 There may be a way to chuck multiple lines in one sysex call. This has not been tested, but if anyone reading this wants to give it a try, I'll be more than willing to update the repository to reflect your findings. Sending sysex data is not particularly fast because it's still just a midi message, but fortunately, its only 360x96 bytes of data being sent, so most languages should be able to generate and send this data without issue *(Even slow python)*
 
-A python implementation of lighting the screen is included in this repository for example. 
+### Demo Application
+* **Python**: A python implementation of lighting the screen is included in this repository for example. Python is slow at looping so I used numpy for most of the image conversion. There is potentially some optimization that can be done here.
+
+* **Go**: I have also included version of the demo implemented in Go. The Go version is much faster with much less latency. This is because Go is complied and for loops and range loops are magnitudes faster in Go. I also pre-allocate arrays for the image data and sysex buffer in go. Difficult to do in Python as python doesnt support pointers.
 
 <a name="Integration" ></a>
 ## Integration
