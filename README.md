@@ -4,7 +4,8 @@
 
 
 # MPC Studio Black - Midi Speceification
-* [Overview](#overview)  
+* [Overview](#overview)
+* [Sysex Commands](#sysex)  
 * [PAD Note Mapping](#PADNoteMapping)  
 * [Function Buttons Mapping](#FunctionButtonsMapping)  
 * [Q-Link Knobs](#QLinkKnobs)  
@@ -19,6 +20,41 @@
 <a name="overview" ></a>
 ## Overview
 This repository holds the midi specification for the MPC Studio Black. This information was not provided by AKAI Professional, and I am not affiliated with them in any manner. I am simply an owner of the product and have documented it's MIDI protocol for my personal use. The repo is a product of that my findings.
+
+<a name="sysex" ></a>
+## Sysex Commands
+This device makes heavy use of SYSEX(System Exclusive) commands to manipulate settings, control the screen, and open ports. The overal structure of the sysex commands is as follows:
+```
+Header     ProductID    Msg ID  PayloadLength(MsbLsb)  Payload        EndByte
+f0 47 7f   3d           04      00 0b                  00...etc       f7
+```
+### Sysex Msg Parts Description
+* **Header**: The header is the prefix to every message sent. It starts with f0(Sysex begin message byte), followed by the Manufacture Byte 47(Akai), then the model line 7f.
+* **ProductID**: This is Unique to the model of the device in communication. For example, the MPC Studio Silver probably has a different product ID. While the devices may use the same Sysex protocol, Sysex messages will need to use the correct ProductID
+* **Msg ID**: This is the type of message, or command that we are sending. This is specific to each device, and no documentation was prodivded, but I have decifered some of them and I'll document what I have found.
+* **Payload Length**: This is the length of the payload in bytes. It uses two bytes for this length to represent values greater than 127. As you may know, MIDI message bytes cannot be larger than 127, so when you need to send a value larger than 127, the larger value is broken up into two bytes in MSB_LSB(Most significant byte _ Least significant byte) format.
+* **EndByte**: This is the universal end byte in all Sysex messages.
+
+### Sysex MSG IDs
+|Msg ID | Command | Description |
+| -- | -- | -- |
+| 52 | Ping | This sysex commands pings the device to let it know the computer is communicating with it. Once it is first sent, it needs to be sent on a regular interval|
+| 62 | Mode| This switches the mode of the MPC Studio. By default, it is in pulbic mode. Sending a value of 61 will put the device in private/MPC mode. Sending a value of 02 will revert to public mode. |
+| 04 | Display | This tells the device you are sending a display command to update the screen. More on the screen is defined below |
+
+### Modes
+I have discovered that the device has different modes. The default is public, but while the MPC software is open, it goes into private mode.
+
+* Public Mode: The device communicates over the public port and not the private port. It also sends CC data from 0-127 for each Qlink knob.
+* Private Mode: The device communicates over the private port and not the public port. It send signed bits/ encoder data for each qlink knob. This is the preferred mode in my opinion.
+
+You can switch between the modes with the following SYSEX commands(in hex format):
+
+```
+f0 47 7f 3d 62 00 01 61 f7 # Private Mode
+f0 47 7f 3d 62 00 01 02 f7 # Public Mode
+```
+
 
 <a name="PADNoteMapping" ></a>
 ## PAD Note Mapping
