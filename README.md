@@ -404,6 +404,6 @@ There are many DAWs that support controller scripting at the moment, so it is po
 One workaround to this could be to write a custom sort of driver, that implements the graphical display for a controller. Use that "driver" as a middle-man between the DAWs scripting env and the controller. Have the "driver" install a virtual midi port. Send all data to the virtual MIDI port, and use the driver to interpolate that data, and show the appropriate screen/led feedback.
 
 ## Edit
-I have created a small and simple Pure Python graphics library to meet the needs of generating 3d graphics for these small screens. Because the resolution is small, Python's notoriously slow looping does not pose much latency. It's a work in progress, but in the future, I'll update the repository to include the library.
+I have created a small and simple Pure Python graphics library to meet the needs of generating 2D graphics for these small screens. Because the resolution is small, Python's notoriously slow looping does not pose much latency. It's a work in progress, but in the future, I'll update the repository to include the library.
 
 This is a lot of work, and carries the risk of jeopardizing the manufacturers functionality of the device, but for older devices that aren't currently supported ie(MPC Studio Black) it could be worth it in the end.
