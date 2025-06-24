@@ -391,6 +391,31 @@ With that, you should be able to send data to the screen.  You would still need 
 
 There may be a way to chuck multiple lines in one sysex call. This has not been tested, but if anyone reading this wants to give it a try, I'll be more than willing to update the repository to reflect your findings. Sending sysex data is not particularly fast because it's still just a midi message, but fortunately, its only 360x96 bytes of data being sent, so most languages should be able to generate and send this data without issue *(Even slow python)*
 
+```
+
+MPC Studio Black Display Message Diagram
+Sysex Start: The starting byte of every sysex message
+Msg Header: The header bytes of every sysex message. This is usually the vendor id, product category and product id, or something close
+Msy Type: This defines what type of message you are sending. In this case, 0x04 is telling the device that you are setting pixels on the display.
+Msg Length: This is the length of the payload in this message. It is an integer represented in msblsb. This allows you to represent numbers larger than 127(7bits)
+Pixel Count: The total number of pixels this message will set, also in msblsb
+xpos: The horizontal starting point of this message on the display, starting from left to right
+ypos: The vertical starting point of this message on the display, starting from top to bottom
+pixel data: The pixel data, on/off, encoded in bytes. One byte represents 3 pixels. On or off is bitwise | depending on pixel position in the 3
+
+
+[Sysex Start] [Msg Header] [Msg Type] [Msg Length*] [Pixel Count*] [x pos] [y pos] [  pixel data  ] [Sysex End]
+[ f0 ]        [ 47 7f 3d ] [   04   ] [   00 0b   ] [    00 0f   ] [00 00] [00 02] [03 3f 3f 3f 30] [   f7    ]
+
+Message Breakdown
+
+This is a display message 
+It's payload is 11 bytes long. 
+It will set 15 pixels 
+It will start at position x,y /(0, 2)
+The bitmap is 001111111111100
+```
+
 ### Demo Application
 * **Python**: A python implementation of lighting the screen is included in this repository for example. Python is slow at looping so I used numpy for most of the image conversion. There is potentially some optimization that can be done here.
 
