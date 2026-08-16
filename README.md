@@ -368,10 +368,13 @@ With this encoding, a stride of 360 pixel can be represented in 120 bytes buffer
 # sysex start 1 byte
 f0 
 
-# header 11 bytes
-47 7f 3d 04 00 7e 02 68 00 00 00 
+# header bytes: 11 bytes
+47 7f 3d
 
-# line number 1 byte
+# Command Byte: 1
+04 00 7e 02 68 00 00 00 
+
+# line number: 1 byte
 40
 
 # image data: 120bytes stride 
@@ -392,34 +395,29 @@ With that, you should be able to send data to the screen.  You would still need 
 There may be a way to chuck multiple lines in one sysex call. This has not been tested, but if anyone reading this wants to give it a try, I'll be more than willing to update the repository to reflect your findings. Sending sysex data is not particularly fast because it's still just a midi message, but fortunately, its only 360x96 bytes of data being sent, so most languages should be able to generate and send this data without issue *(Even slow python)*
 
 ```
+MSB_LSB = two bytes to potentially represent a larger number than 127. Sysex bytes are limited to 7bits/ 0-127, so to represent larger numbers two bytes are combined.
 
-MPC Studio Black Display Message Diagram
-Sysex Start: The starting byte of every sysex message
-Msg Header: The header bytes of every sysex message. This is usually the vendor id, product category and product id, or something close
-Msy Type: This defines what type of message you are sending. In this case, 0x04 is telling the device that you are setting pixels on the display.
-Msg Length: This is the length of the payload in this message. It is an integer represented in msblsb. This allows you to represent numbers larger than 127(7bits)
-Pixel Count: The total number of pixels this message will set, also in msblsb
-xpos: The horizontal starting point of this message on the display, starting from left to right
-ypos: The vertical starting point of this message on the display, starting from top to bottom
-pixel data: The pixel data, on/off, encoded in bytes. One byte represents 3 pixels. On or off is bitwise | depending on pixel position in the 3
+Start	Header		   CmdType 	CmdLen:MSB_LSB		pixel_count:MSB_LSB	 x_pos:MSB_LSB	 y_pos: MSB_LSB	[Line Data]		Sysex End
+F0    [47 7F 3D]	[62]		    [00 00]					   [00 00]					         [00 00]			     [00 00]			     [Line Data]		[F7]
+								                   #Bytes in cmd  [------------------------------------------------------------]
+									
+Put plainly, assume you wanted to draw a line of 12 pixels long, starting at x=5, y=10, the data would look like this:
 
-
-[Sysex Start] [Msg Header] [Msg Type] [Msg Length*] [Pixel Count*] [x pos] [y pos] [  pixel data  ] [Sysex End]
-[ f0 ]        [ 47 7f 3d ] [   04   ] [   00 0b   ] [    00 0f   ] [00 00] [00 02] [03 3f 3f 3f 30] [   f7    ]
-
-Message Breakdown
-
-This is a display message 
-It's payload is 11 bytes long. 
-It will set 15 pixels 
-It will start at position x,y /(0, 2)
-The bitmap is 001111111111100
+Start:       0xF0           = Universal SysEx Start
+Header:      0x47 0x7F 0x3D = MPC Studio Black SysEx Header. Identifies the message as being for the MPC Studio Black.
+CMD Type:    0x62           = Update Display. Internally, this is the command that tells the MPC Studio Black to update its display with new pixel data.
+Cmd Length:  0x00 0x0C      = 12 bytes of data (pixel_count + x_pos + y_pos + line_data) This is the total length of the command data that follows, excluding the end byte.
+pixel_count: 0x00 0x0C      = 12 pixels. Indicates the line data will contain 12 pixels. Each byte represents 3 pixels, so 4 bytes are needed to represent 12 pixels.
+x_pos:       0x00 0x05      = x position of the line. This indicates that the line should start at the 5th pixel from the left of the display.
+y_pos:       0x00 0x0A      = y position of the line. This indicates that the line should be drawn at the 10th pixel from the top of the display.
+line_data:   0x3F 0x3F 0x3f 0x3f = 12 pixels of data (each byte represents 3 pixels, so 4 bytes = 12 pixels, all pixels on)
+End:         0xF7           = Universal SysEx End. This byte indicates the end of the SysEx message.
 ```
 
 ### Demo Application
 * **Python**: A python implementation of lighting the screen is included in this repository for example. Python is slow at looping so I used numpy for most of the image conversion. There is potentially some optimization that can be done here.
 
-* **Go**: I have also included version of the demo implemented in Go. The Go version is much faster with much less latency. This is because Go is complied and for loops and range loops are magnitudes faster in Go. I also pre-allocate arrays for the image data and sysex buffer in go. Difficult to do in Python as python doesnt support pointers.
+* **Go**: I have also included version of the demo implemented in Go. The Go version is much faster with much less latency. This is because Go is complied and "for loops" and range loops are magnitudes faster in Go. I also pre-allocate arrays for the image data and sysex buffer in go. Difficult to do in Python as python doesn't support pointers.
 
 <a name="Integration" ></a>
 ## Integration
@@ -431,4 +429,4 @@ One workaround to this could be to write a custom sort of driver, that implement
 ## Edit
 I have created a small and simple Pure Python graphics library to meet the needs of generating 2D graphics for these small screens. Because the resolution is small, Python's notoriously slow looping does not pose much latency. It's a work in progress, but in the future, I'll update the repository to include the library.
 
-This is a lot of work, and carries the risk of jeopardizing the manufacturers functionality of the device, but for older devices that aren't currently supported ie(MPC Studio Black) it could be worth it in the end.
+This is a lot of work, and carries the risk of jeopardizing the manufacturer's functionality of the device, but for older devices that aren't currently supported ie(MPC Studio Black) it could be worth it in the end.
